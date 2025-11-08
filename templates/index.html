@@ -4,8 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <!-- <link href="https://cdn.tailwindcss.com" rel="stylesheet"> -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
-    Yay!! This is amazing
+    <header class="bg-blue-500 p-5 text-white flex gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-flask" viewBox="0 0 16 16">
+            <path d="M4.5 0a.5.5 0 0 0 0 1H5v5.36L.503 13.717A1.5 1.5 0 0 0 1.783 16h12.434a1.5 1.5 0 0 0 1.28-2.282L11 6.359V1h.5a.5.5 0 0 0 0-1zM10 2H9a.5.5 0 0 0 0 1h1v1H9a.5.5 0 0 0 0 1h1v1H9a.5.5 0 0 0 0 1h1.22l.61 1H10a.5.5 0 1 0 0 1h1.442l.611 1H11a.5.5 0 1 0 0 1h1.664l.611 1H12a.5.5 0 1 0 0 1h1.886l.758 1.24a.5.5 0 0 1-.427.76H1.783a.5.5 0 0 1-.427-.76l4.57-7.48A.5.5 0 0 0 6 6.5V1h4z"/>
+        </svg>
+        <span> Chemical Finder </span>
+    </header>
+    <main class="h-screen">
+        <div class="p-5">
+            <form action="/" method="post">
+                <label for="name">Product name:</label>
+                <input type="text" id="name" name="name" class="border border-black" required>
+                <br><br>
+                <div id="input-container"> </div>
+                
+                <button class="bg-blue-500 text-white" type="button" onclick="addInput()">Add More</button>
+                <button type="submit" class="bg-blue-500 text-white">Send</button>
+            </form>
+        </div>
+        
+    </main>
+    <script>
+        function addInput() {
+            // Create a new input element
+            const newInput = document.createElement("input");
+            newInput.type = "text";
+            newInput.name = "input_field";
+            newInput.placeholder = "Enter text";
+
+            // Append it to the container
+            document.getElementById("input-container").appendChild(newInput);
+
+            // Optional: add a line break for spacing
+            document.getElementById("input-container").appendChild(document.createElement("br"));
+        }
+    </script>
 </body>
 </html>
