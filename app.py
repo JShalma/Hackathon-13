@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from flask import Flask, request, render_template
 import json
 from openai import OpenAI  
+openrouter_api_key = os.getenv("OPENROUTER_API_KEY")
 
 # Load environment variables from .env file immediately
 load_dotenv() 
