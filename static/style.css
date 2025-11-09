@@ -1,11 +1,26 @@
-*{
+/* Global reset so spacing is predictable */
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
-header{
-    
+
+/* Make sure everything uses Times New Roman by default */
+body,
+button,
+input,
+textarea,
+select {
+    font-family: "Times New Roman", Times, serif;
 }
-.blue{
-    background-color: aqua;
+
+/* Let the page start with your soft light background + readable text.
+   Tailwind classes in index.html can override this where needed. */
+body {
+    background-color: #f5f7f4;  /* soft light neutral */
+    color: #111827;             /* dark, readable text */
 }
+
+/* Nothing else is required here:
+   - All layout, colors (sage/forest), rounded corners, shadows, etc.
+     are handled by Tailwind utility classes directly in index.html. */

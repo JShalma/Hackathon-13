@@ -1,8 +1,132 @@
-{
-    "Sodium Lauryl Sulfate": {
-        "description": "Strong detergent and foaming agent that removes oils and dirt",
-        "origin": "Synthetic, derived from coconut or palm oil",
-        "human-safety": "Can be irritating to skin and eyes in high concentrations; generally safe in small amounts",
-        "environment-safety": "Can be toxic to aquatic life; biodegrades slowly"
-    }
-}
+[
+  {
+    "Chemical": "Niacinamide",
+    "Description": "A form of Vitamin B3 that helps strengthen the skin barrier, reduce redness, and minimize pores.",
+    "Source": "Synthetic",
+    "HumanHealth": "Well-tolerated by most, effective for acne and anti-aging.",
+    "EnvironmentalImpact": "Biodegradable and non-toxic",
+    "PregnancySafe": "Yes",
+    "Fragrance": "No",
+    "Acneogenic": 0,
+    "Sensitivity_Risk": "Low",
+    "Hyperpigmentation_Benefit": "Yes",
+    "Anti_Aging_Benefit": "Yes"
+  },
+  {
+    "Chemical": "Hyaluronic Acid",
+    "Description": "Binds up to 1,000 times its weight in water; boosts hydration and elasticity.",
+    "Source": "Produced by fermenting plant-derived sugars using non-pathogenic bacteria",
+    "HumanHealth": "Not harmful, as it is naturally produced by humans",
+    "EnvironmentalImpact": "Environmentally safe and biodegradable",
+    "PregnancySafe": "Yes",
+    "Fragrance": "No",
+    "Acneogenic": 0,
+    "Sensitivity_Risk": "Low",
+    "Hyperpigmentation_Benefit": "No",
+    "Anti_Aging_Benefit": "Yes"
+  },
+  {
+    "Chemical": "Sodium Lauryl Sulfate",
+    "Description": "Strong detergent and foaming agent that removes oils and dirt.",
+    "Source": "Synthetic, derived from coconut or palm oil",
+    "HumanHealth": "Can be irritating to skin and eyes in high concentrations, generally safe in small amounts",
+    "EnvironmentalImpact": "Can be toxic to aquatic life; biodegrades slowly",
+    "PregnancySafe": "Yes",
+    "Fragrance": "No",
+    "Acneogenic": 1,
+    "Sensitivity_Risk": "High",
+    "Hyperpigmentation_Benefit": "No",
+    "Anti_Aging_Benefit": "No"
+  },
+  {
+    "Chemical": "Glycerin",
+    "Description": "Draws moisture from the air into the skin; very gentle and effective.",
+    "Source": "Derived from plant oils or produced synthetically from petroleum-based sources",
+    "HumanHealth": "Very safe and non-toxic",
+    "EnvironmentalImpact": "Biodegradable and environmentally friendly but can contribute to deforestation",
+    "PregnancySafe": "Yes",
+    "Fragrance": "No",
+    "Acneogenic": 0,
+    "Sensitivity_Risk": "Low",
+    "Hyperpigmentation_Benefit": "No",
+    "Anti_Aging_Benefit": "Yes"
+  },
+  {
+    "Chemical": "Dimethicone",
+    "Description": "A silicone that forms a smooth, protective layer.",
+    "Source": "Synthetic; made from silicon, oxygen, and hydrocarbons",
+    "HumanHealth": "Non-toxic and hypoallergenic",
+    "EnvironmentalImpact": "Does not break down as easily as natural ingredients",
+    "PregnancySafe": "Yes",
+    "Fragrance": "No",
+    "Acneogenic": 0,
+    "Sensitivity_Risk": "Low",
+    "Hyperpigmentation_Benefit": "No",
+    "Anti_Aging_Benefit": "No"
+  },
+  {
+    "Chemical": "Glycolic Acid",
+    "Description": "Brightens, smooths texture, and boosts cell turnover.",
+    "Source": "Originally extracted from sugarcane, now produced synthetically",
+    "HumanHealth": "Can cause irritation at high concentrations",
+    "EnvironmentalImpact": "Biodegradable",
+    "PregnancySafe": "Yes, in low concentrations",
+    "Fragrance": "No",
+    "Acneogenic": 0,
+    "Sensitivity_Risk": "Medium",
+    "Hyperpigmentation_Benefit": "Yes",
+    "Anti_Aging_Benefit": "Yes"
+  },
+  {
+    "Chemical": "Vitamin E",
+    "Description": "Protects skin lipids and enhances other antioxidants.",
+    "Source": "Derived from vegetable oils or made synthetically in labs",
+    "HumanHealth": "Usually safe, but if overused, can clog pores in some people",
+    "EnvironmentalImpact": "Biodegradable and non-toxic",
+    "PregnancySafe": "Yes",
+    "Fragrance": "No",
+    "Acneogenic": 1,
+    "Sensitivity_Risk": "Low",
+    "Hyperpigmentation_Benefit": "No",
+    "Anti_Aging_Benefit": "Yes"
+  },
+  {
+    "Chemical": "Phenoxyethanol",
+    "Description": "A synthetic preservative used to prevent bacteria and mold.",
+    "Source": "Produced by reacting phenol with ethylene oxide",
+    "HumanHealth": "Safe in low amounts (<1%); can cause skin or eye irritation",
+    "EnvironmentalImpact": "Biodegrades slowly; can be toxic in aquatic environments",
+    "PregnancySafe": "Yes, in standard cosmetic concentrations",
+    "Fragrance": "Slight floral odor",
+    "Acneogenic": 1,
+    "Sensitivity_Risk": "Medium",
+    "Hyperpigmentation_Benefit": "No",
+    "Anti_Aging_Benefit": "No"
+  },
+  {
+    "Chemical": "Water",
+    "Description": "The primary solvent in most cosmetic formulations, used to dissolve other ingredients.",
+    "Source": "Natural",
+    "HumanHealth": "Safe",
+    "EnvironmentalImpact": "Safe",
+    "PregnancySafe": "Yes",
+    "Fragrance": "No",
+    "Acneogenic": 0,
+    "Sensitivity_Risk": "Low",
+    "Hyperpigmentation_Benefit": "No",
+    "Anti_Aging_Benefit": "No"
+  },
+  {
+    "Chemical": "Citric Acid",
+    "Description": "An alpha-hydroxy acid (AHA) used to adjust the pH of products and provide mild exfoliation.",
+    "Source": "Natural (from citrus fruits) or Synthetic",
+    "HumanHealth": "Safe in cosmetic concentrations, can cause mild irritation if pH is too low.",
+    "EnvironmentalImpact": "Biodegradable",
+    "PregnancySafe": "Yes",
+    "Fragrance": "No",
+    "Acneogenic": 0,
+    "Sensitivity_Risk": "Medium",
+    "Hyperpigmentation_Benefit": "Yes",
+    "Anti_Aging_Benefit": "No"
+  }
+]

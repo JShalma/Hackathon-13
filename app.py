@@ -1,42 +1,168 @@
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, request, render_template
 import json
+import os
+from openai import OpenAI  # Use the V1.0+ client syntax
 
 app = Flask(__name__)
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    if request.method == 'POST':
-        # data = request.get_json()  # returns a Python dict
-        # if not data:
-        #     return jsonify({'error': 'No JSON received'}), 400
-        # Get all values of inputs named 'input_field'
-        inputs = request.form.getlist('input_field')
-        # Now inputs is a Python list of strings
-        print(inputs)  # For debugging in console
+# Paths to your JSON file
+DATABASE_FILE = "data.json"
 
-        data = read_json()
-        print(data)
+# Gemini API key
+# WARNING: Replace the key below with your actual, valid API key.
+openai_api_key = "YOUR_REAL_API_KEY_HERE" 
+client = OpenAI(api_key=openai_api_key)
 
-        return f"You submitted: {inputs}"
-    return render_template('index.html')
 
-# @app.route('/read-json')
-def read_json():
+# --- Helper Functions ---
+
+def read_json(file_path):
+    if os.path.exists(file_path):
+        with open(file_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return []
+
+def write_json(file_path, data):
+    with open(file_path, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=4)
+
+def lookup_chemical(name, chemicals_db):
+    """Return chemical info if it exists in the database. Uses strip() for robustness."""
+    clean_name = name.lower().strip()
+    
+    for chem in chemicals_db:
+        db_chemical_name = chem.get("Chemical", "").lower().strip()
+        
+        if db_chemical_name == clean_name:
+            return chem
+    return None
+
+def analyze_concerns(chemical_info, user_concerns):
+    """Checks the chemical against user concerns and adds a 'Concern_Note' field."""
+    notes = []
+    
+    # Check for Acne-prone
+    if "acne" in user_concerns:
+        acne_risk = chemical_info.get("Acneogenic", 0)
+        if acne_risk > 0:
+            notes.append(f"⚠️ **Acne Alert:** May clog pores (Acneogenic score: {acne_risk}).")
+
+    # Check for Sensitive Skin
+    if "sensitive_skin" in user_concerns:
+        sensitivity = chemical_info.get("Sensitivity_Risk", "Low").lower()
+        if sensitivity == "medium":
+            notes.append("❗️ **Sensitivity Warning:** Has a Medium risk of causing irritation.")
+        elif sensitivity == "high":
+            notes.append("❌ **High Irritant:** High risk for sensitive skin.")
+
+    # Check for Fragrance-sensitive
+    if "fragrance_free" in user_concerns:
+        is_fragrance = chemical_info.get("Fragrance", "No").lower()
+        if is_fragrance != "no":
+            notes.append("👃 **Fragrance:** Contains fragrance or has a slight odor.")
+
+    # Check for Environmental Impact
+    if "eco" in user_concerns:
+        eco = chemical_info.get("EnvironmentalImpact", "Unknown").lower()
+        if "slow biodegradation" in eco or "toxic" in eco:
+            notes.append("🌍 **Eco Concern:** Potential concern for slow breakdown or aquatic toxicity.")
+
+    # Check for Anti-Aging/Hyperpigmentation benefits
+    if "anti_aging" in user_concerns and chemical_info.get("Anti_Aging_Benefit") == "Yes":
+        notes.append("✅ **Benefit:** Supports anti-aging goals.")
+    
+    if "hyperpigmentation" in user_concerns and chemical_info.get("Hyperpigmentation_Benefit") == "Yes":
+        notes.append("✅ **Benefit:** Beneficial for targeting hyperpigmentation.")
+
+    chemical_info["Concern_Note"] = notes
+    return chemical_info
+
+def add_chemical_gemini(name):
+    """Fetch chemical info using Gemini and add to JSON database."""
     try:
-        # Open and read the JSON file
-        with open('data.json', 'r') as f:
-            data = json.load(f)  # loads JSON into a Python dict
-    except FileNotFoundError:
-        return jsonify({'error': 'JSON file not found'}), 404
-    except json.JSONDecodeError:
-        return jsonify({'error': 'Invalid JSON file'}), 400
+        chemicals_db = read_json(DATABASE_FILE)
+        
+        # NOTE: You will need to prompt Gemini for the new fields (Acneogenic, Sensitivity_Risk, etc.)
+        messages = [
+            {"role": "system", "content": "You are an expert cosmetic chemist AI. Your ONLY output is a valid JSON object describing the chemical. The keys must include: Chemical, Description, Source, HumanHealth, EnvironmentalImpact, PregnancySafe, Fragrance, Acneogenic (0 or 1), Sensitivity_Risk (Low, Medium, or High), Hyperpigmentation_Benefit (Yes or No), and Anti_Aging_Benefit (Yes or No)."},
+            {"role": "user", "content": f"Provide the analysis for the ingredient '{name}'."}
+        ]
+        
+        response = client.chat.completions.create(
+            model="gemini-2.0-lite", 
+            messages=messages,
+            temperature=0,
+            response_format={"type": "json_object"} 
+        )
+        
+        text = response.choices[0].message.content
+        text = text.strip().replace('```json', '').replace('```', '')
+        chem_data = json.loads(text)
+        
+        # Save to local database
+        chemicals_db.append(chem_data)
+        write_json(DATABASE_FILE, chemicals_db)
+        return chem_data
+    except Exception as e:
+        print("Gemini API error:", e)
+        # Fallback structure
+        return {
+            "Chemical": name,
+            "Description": f"Analysis unavailable: API Key/Network Error. Details: {str(e)[:100]}",
+            "Source": "API Error",
+            "HumanHealth": "Unknown",
+            "EnvironmentalImpact": "Unknown",
+            "PregnancySafe": "Unknown",
+            "Fragrance": "Unknown",
+            "Acneogenic": 0, "Sensitivity_Risk": "Low", "Hyperpigmentation_Benefit": "No", "Anti_Aging_Benefit": "No"
+        }
 
-    # Now `data` is a Python dictionary
-    print("Loaded data:", data)
+def get_chemicals(ingredient_list, user_concerns):
+    """Return info for all ingredients, analyzing concerns after lookup/API call."""
+    chemicals_db = read_json(DATABASE_FILE)
+    results = []
+    for ing in ingredient_list:
+        cleaned_ing = ing.strip()
+        chem_info = lookup_chemical(cleaned_ing, chemicals_db)
+        if not chem_info:
+            chem_info = add_chemical_gemini(cleaned_ing)
+        
+        # 🛑 CRITICAL: Analyze concerns here before adding to results
+        chem_info = analyze_concerns(chem_info, user_concerns)
+        results.append(chem_info)
+    return results
 
-    # You can manipulate it or just return it as JSON
-    return jsonify(data)
 
+# --- Flask Route ---
 
-if __name__ == '__main__':
+@app.route("/", methods=["GET", "POST"])
+def index():
+    chemicals_info = None
+    product_name = None
+    concerns = []
+
+    if request.method == "POST":
+        # 1. Collect form data
+        inputs = request.form.getlist("ingredients")
+        pasted_text = request.form.get("ingredients_text")
+        product_name = request.form.get("product_name")
+        concerns = request.form.getlist("concerns") # Capture concerns
+
+        if pasted_text:
+            pasted_ingredients = [i.strip() for i in pasted_text.replace('\n', ',').replace(';', ',').split(",") if i.strip()]
+            inputs.extend(pasted_ingredients)
+        
+        inputs = [i for i in inputs if i]
+        
+        # 2. Get chemical info (pass concerns to the analysis function)
+        if inputs:
+            chemicals_info = get_chemicals(inputs, concerns)
+
+    # Render the single index.html template
+    return render_template("index.html", 
+                           chemicals=chemicals_info, 
+                           product_name=product_name,
+                           concerns=concerns)
+
+if __name__ == "__main__":
     app.run(debug=True)
