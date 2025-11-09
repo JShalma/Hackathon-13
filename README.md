@@ -18,9 +18,17 @@ A Personalized Ingredient Checker
 
 Frontend: HTML + Tailwind CSS for a modern, elegant, and responsive design
 
-Backend: Flask (Python) for server-side logic, routing, and data rendering
+Our backend is built with Flask (Python) and powered by a structured JSON ingredient database (data.json). When a user enters ingredients and selects their concerns, the app:
 
-Database: A single JSON file (data.json) containing detailed ingredient information — including descriptions, sources, health safety, environmental impact, and fragrance or pregnancy safety indicators
+  1. Looks up known ingredients in the local database (with fields like description, source, human health impact, environmental impact, pregnancy safety, fragrance, and benefits).
+
+  2. If an ingredient is not found, Formelle calls a Generative AI model via OpenRouter to generate a structured, science-style ingredient profile.
+
+  3. The AI response is validated into a strict JSON format and saved back into data.json, so the system “learns” new ingredients over time.
+
+  4. For each ingredient, we add dynamic notes based on the user’s concerns (e.g. acne risk, sensitivity, pregnancy safety, eco impact, anti-aging or hyperpigmentation benefits) and display them in a clear, elegant UI.
+
+This combination of a curated base dataset + on-demand AI-generated entries allows Formelle to scale beyond a static list, while keeping the experience fast, personalized, and educational.
 
 
   <h2>Features 💻</h2>
