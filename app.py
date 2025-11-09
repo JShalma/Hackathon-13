@@ -1,28 +1,45 @@
+import os
+from dotenv import load_dotenv 
 from flask import Flask, request, render_template
 import json
-import os
-from openai import OpenAI  # Use the V1.0+ client syntax
+from openai import OpenAI  
+
+# Load environment variables from .env file immediately
+load_dotenv() 
 
 app = Flask(__name__)
 
 # Paths to your JSON file
 DATABASE_FILE = "data.json"
 
-# Gemini API key
-# WARNING: Replace the key below with your actual, valid API key.
-openai_api_key = "YOUR_REAL_API_KEY_HERE" 
-client = OpenAI(api_key=openai_api_key)
+# 🔑 SECURE OPENROUTER CONFIGURATION
+# ----------------------------------------------------
+# 1. Get the key securely from the environment variable (OPENROUTER_API_KEY)
+openrouter_api_key = os.environ.get("OPENROUTER_API_KEY")
+
+if not openrouter_api_key:
+    # This prevents the app from running without a key
+    raise ValueError("OPENROUTER_API_KEY environment variable not set. Please check your .env file and ensure python-dotenv is installed.")
+
+# 2. Configure the client to use the OpenRouter endpoint
+client = OpenAI(
+    api_key=openrouter_api_key, 
+    base_url="https://openrouter.ai/api/v1"  
+)
+# ----------------------------------------------------
 
 
 # --- Helper Functions ---
 
 def read_json(file_path):
+    """Reads the local JSON database."""
     if os.path.exists(file_path):
         with open(file_path, "r", encoding="utf-8") as f:
             return json.load(f)
     return []
 
 def write_json(file_path, data):
+    """Writes to the local JSON database."""
     with open(file_path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4)
 
@@ -43,7 +60,12 @@ def analyze_concerns(chemical_info, user_concerns):
     
     # Check for Acne-prone
     if "acne" in user_concerns:
-        acne_risk = chemical_info.get("Acneogenic", 0)
+        try:
+            # Safely check Acneogenic score, converting to float for comparison
+            acne_risk = float(chemical_info.get("Acneogenic", 0))
+        except (ValueError, TypeError):
+            acne_risk = 0
+            
         if acne_risk > 0:
             notes.append(f"⚠️ **Acne Alert:** May clog pores (Acneogenic score: {acne_risk}).")
 
@@ -78,18 +100,19 @@ def analyze_concerns(chemical_info, user_concerns):
     return chemical_info
 
 def add_chemical_gemini(name):
-    """Fetch chemical info using Gemini and add to JSON database."""
+    """Fetch chemical info using Gemini via OpenRouter and add to JSON database."""
     try:
         chemicals_db = read_json(DATABASE_FILE)
         
-        # NOTE: You will need to prompt Gemini for the new fields (Acneogenic, Sensitivity_Risk, etc.)
+        # System prompt for Gemini remains consistent with required JSON structure
         messages = [
             {"role": "system", "content": "You are an expert cosmetic chemist AI. Your ONLY output is a valid JSON object describing the chemical. The keys must include: Chemical, Description, Source, HumanHealth, EnvironmentalImpact, PregnancySafe, Fragrance, Acneogenic (0 or 1), Sensitivity_Risk (Low, Medium, or High), Hyperpigmentation_Benefit (Yes or No), and Anti_Aging_Benefit (Yes or No)."},
             {"role": "user", "content": f"Provide the analysis for the ingredient '{name}'."}
         ]
         
         response = client.chat.completions.create(
-            model="gemini-2.0-lite", 
+            # 💡 Model set for the lowest-cost option on OpenRouter
+            model="google/gemini-2.5-flash-lite", 
             messages=messages,
             temperature=0,
             response_format={"type": "json_object"} 
@@ -104,7 +127,7 @@ def add_chemical_gemini(name):
         write_json(DATABASE_FILE, chemicals_db)
         return chem_data
     except Exception as e:
-        print("Gemini API error:", e)
+        print("API error:", e)
         # Fallback structure
         return {
             "Chemical": name,
@@ -123,11 +146,13 @@ def get_chemicals(ingredient_list, user_concerns):
     results = []
     for ing in ingredient_list:
         cleaned_ing = ing.strip()
+        if not cleaned_ing: continue # Skip empty strings
+        
         chem_info = lookup_chemical(cleaned_ing, chemicals_db)
         if not chem_info:
             chem_info = add_chemical_gemini(cleaned_ing)
         
-        # 🛑 CRITICAL: Analyze concerns here before adding to results
+        # Analyze concerns here before adding to results
         chem_info = analyze_concerns(chem_info, user_concerns)
         results.append(chem_info)
     return results
@@ -149,10 +174,11 @@ def index():
         concerns = request.form.getlist("concerns") # Capture concerns
 
         if pasted_text:
+            # Handle various delimiters (comma, newline, semicolon) for pasted text
             pasted_ingredients = [i.strip() for i in pasted_text.replace('\n', ',').replace(';', ',').split(",") if i.strip()]
             inputs.extend(pasted_ingredients)
         
-        inputs = [i for i in inputs if i]
+        inputs = [i for i in inputs if i] # Final cleanup for empty strings
         
         # 2. Get chemical info (pass concerns to the analysis function)
         if inputs:
