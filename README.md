@@ -54,8 +54,11 @@ Database: A single JSON file (data.json) containing detailed ingredient informat
 - Designing a scalable Flask backend under time constraints
 
 - Structuring and cleaning raw JSON datasets
+    - structuring chemical data in an efficient and readable format
 
 - Achieving a cohesive, professional design without external CSS libraries
+
+- connecting the backend and frontend smoothly through Flask routes
 
 - Making the tool both scientifically accurate and aesthetically refined
 
