@@ -12,9 +12,7 @@ app = Flask(__name__)
 # Paths to your JSON file
 DATABASE_FILE = "data.json"
 
-# 🔑 SECURE OPENROUTER CONFIGURATION
-# ----------------------------------------------------
-# 1. Get the key securely from the environment variable (OPENROUTER_API_KEY)
+
 openrouter_api_key = os.environ.get("OPENROUTER_API_KEY")
 
 if not openrouter_api_key:
