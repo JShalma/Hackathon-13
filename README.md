@@ -9,9 +9,9 @@ A Personalized Ingredient Checker
 
   <h2>Inspiration✨</h2>
   
-  In a world where beauty labels promise “clean,” “natural,” or “dermatologist-approved” products, consumers are often left confused by ingredient lists filled with scientific jargon. We wanted to change that.
+  In a world where beauty labels promise “clean,” “natural,” "dermally-safe", or “dermatologist-approved” products, consumers are often left confused by ingredient lists filled with scientific jargon. We wanted to change that.
   Formelle was born from the idea that science should empower, not intimidate. Our team set out to build a tool that translates complex cosmetic chemistry into clear, human language, helping users understand how each ingredient affects their skin, health, and the environment.
-  We envision Formelle as the bridge between scientific transparency and everyday beauty choices, guiding people toward products that truly align with their values and needs. Beyond just regualar people, Formelle can be very useful for very useful for dermatologists, cosmetic chemists, skincare brands, and sustainability researchers who need quick, organized insights into ingredient safety, sourcing, and environmental impact. It can also assist regulatory professionals and product developers in ensuring formulations meet clean beauty standards and consumer transparency expectations.
+  We envision Formelle as the bridge between scientific transparency and everyday beauty choices, guiding people toward products that truly align with their values and needs. Beyond just regualar people, Formelle can be very useful for dermatologists, cosmetic chemists, skincare brands, and sustainability researchers who need quick, organized insights into ingredient safety, sourcing, and environmental impact. It can also assist regulatory professionals and product developers in ensuring formulations meet clean beauty standards and consumer transparency expectations.
 
 
   <h2>How We Built It ⚙️ </h2>
